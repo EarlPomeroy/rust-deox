@@ -1,6 +1,9 @@
+#![allow(unused_must_use)]
+
 use std::{env, fs::File, io::Read};
 
 mod deox;
+use crate::deox::header::Header;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -17,29 +20,25 @@ fn main() {
 fn read_file(file_name: &String) -> bool {
     let file = File::open(file_name);
 
-    match file {
-        Ok(mut f) => {
-            println!("File Found!");
-            let mut buffer = [0; 8];
-            f.read(&mut buffer);
+    if let Ok(mut f) = file {
+        println!("File Found!");
+        let mut buffer = [0; 8];
+        f.read(&mut buffer);
 
-            println!("{:?}", buffer);
+        let h = Header::new(buffer);
 
-            let h = deox::Header::new(buffer);
-            match h {
-                Ok(header) => {
-                    println!("{:?}", header);
-                    true
-                }
-                Err(e) => {
-                    println!("Could not parse file: {}", e);
-                    false
-                }
+        match h {
+            Ok(header) => {
+                println!("{}", header);
+                true
+            }
+            Err(e) => {
+                println!("Could not parse file: {}", e);
+                false
             }
         }
-        Err(_) => {
-            println!("Error: File Not Found!");
-            false
-        }
+    } else {
+        println!("Error: File Not Found!");
+        false
     }
 }

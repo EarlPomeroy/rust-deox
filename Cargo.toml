@@ -7,7 +7,7 @@ edition = "2021"
 
 [lib]
 name = "deox"
-path = "src/deox.rs"
+path = "src/deox/mod.rs"
 
 [[bin]]
 name = "rust-deox"
